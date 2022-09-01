@@ -40,7 +40,7 @@ local function requesturl(url, bypass)
     if betterisfile(url) and shared.FutureDeveloper then 
         return readfile(url)
     end
-    local repourl = bypass and "https://raw.githubusercontent.com/joeengo/" or "https://raw.githubusercontent.com/joeengo/Future/main/"
+    local repourl = bypass and "https://raw.githubusercontent.com/7GRANDCRACKED/" or "https://raw.githubusercontent.com/7GRANDCRACKED/Future/main/"
     local url = url:gsub("Future/", "")
     local req = requestfunc({
         Url = repourl..url,
@@ -70,7 +70,7 @@ local AnticheatAssistConstants = {
 local function getasset(path)
 	if not betterisfile(path) then
 		local req = requestfunc({
-			Url = "https://raw.githubusercontent.com/joeengo/Future/main/"..path:gsub("Future/assets", "assets"),
+			Url = "https://raw.githubusercontent.com/7GRANDCRACKED/Future/main/"..path:gsub("Future/assets", "assets"),
 			Method = "GET"
 		})
         print("[Future] downloading "..path.." asset.")
@@ -2014,6 +2014,40 @@ do
         Default = 5
     })
 end
+
+do 
+    local function disablerFunction() 
+        entity.character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Dead, true)
+        entity.character.Humanoid:ChangeState(Enum.HumanoidStateType.Dead)
+        repeat task.wait() until entity.character.Humanoid.MoveDirection ~= Vector3.zero
+        task.wait(0.2)
+        entity.character.Humanoid:SetStateEnabled(Enum.HumanoidStateType.Dead, false)
+        entity.character.Humanoid:ChangeState(Enum.HumanoidStateType.Running)
+        workspace.Gravity = 192.6
+    end
+
+    local worker = funcs:newWorker()
+    local acdisabler = {Enabled = false}
+    acdisabler = GuiLibrary.Objects.MovementWindow.API.CreateOptionsButton({
+        Name = "AnticheatDisabler",
+        Function = function(callback)
+            if callback then
+                if entity.isAlive then 
+                    coroutine.wrap(disablerFunction)()
+                end
+                worker:add(lplr.CharacterAdded:Connect(function() 
+                    coroutine.wrap(function()
+                        repeat task.wait() until entity.isAlive
+                        task.wait(1)
+                        disablerFunction()
+                    end)()
+                end))
+                --acdisabler.Toggle()
+            else
+                worker:clean()
+            end
+        end,
+    })
 
 local stopSpeed = false
 GuiLibrary["RemoveObject"]("LongJumpOptionsButton")
